@@ -217,7 +217,7 @@
             //startLoader();
             //alert("Sending Request to :");
             var dtype = $(this).val();
-            var u = "http://34.70.127.65/Project/get_recent/{{company.company_symbol}}/"+dtype+"/?user_token={{ user_token }}";
+            var u = "{{SERVER_URL}}get_recent/{{company.company_symbol}}/"+dtype+"/?user_token={{ user_token }}";
             
             $.ajax({
                 type:"GET",
@@ -238,7 +238,7 @@
         $("#rec").submit(function (e) {
             e.preventDefault();
             var form = $(this);
-            var url1 = "http://34.70.127.65/Project/set_up_rec/?user_token={{ user_token }}";
+            var url1 = "{{SERVER_URL}}set_up_rec/?user_token={{ user_token }}";
 
             $.ajax({
                 type: "POST",

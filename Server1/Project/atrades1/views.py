@@ -1,12 +1,13 @@
 from django.http import HttpResponse
 from django.template import loader
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.core.mail import send_mail
 import numpy as np
 import requests, json
 from django.conf import settings
+from Project.settings import SERVER_URL
 
 HOME_PAGE = '/Project/'
 SUCCESS_JSON = {
@@ -14,12 +15,12 @@ SUCCESS_JSON = {
 }
 
 
-def error_404(request):
-	return render_to_response('atrade/error_404.html')
+def error_404(request, exception):
+	return render(request, 'atrade/error_404.html')
 
 
 def error_500(request):
-	return render_to_response('atrade/error_404.html')
+	return render(request, 'atrade/error_404.html')
 
 
 def get_cart(request):
@@ -105,7 +106,7 @@ def check_login(request):
 		"email": request.POST.get("email"),
 		"password": request.POST.get("password")
 	}
-	res = requests.post(url = 'http://34.70.127.65/Project/check_login/', data=params)
+	res = requests.post(url = SERVER_URL+'check_login/', data=params)
 	resp = res.json()
 	if resp["response_code"] == 0:
 		request.session['user_id'] = resp["user_id"]
@@ -119,7 +120,7 @@ def google_login(request):
 	params = {
 		"email": request.POST.get("email")
 	}
-	res = requests.post(url = 'http://34.70.127.65/Project/google_login/', data=params)
+	res = requests.post(url = SERVER_URL+'google_login/', data=params)
 	resp = res.json()
 	if resp["response_code"] == 0:
 		request.session['user_id'] = resp["user_id"]
@@ -131,12 +132,12 @@ def google_login(request):
 def index(request):
 	dt = 0
 	if not check_session(request):
-		return render_to_response('atrade/index.html')
+		return render(request, 'atrade/index.html')
 	else:
 		try:
 			user_id = request.session['user_id']
 
-			url3 = "http://34.70.127.65/Project/api/bank_accounts/?acc_owner=" + str(user_id)
+			url3 = SERVER_URL+"api/bank_accounts/?acc_owner=" + str(user_id)
 			res3 = requests.get(url = url3)
 			resp3 = res3.json()
 			u_account=[]
@@ -145,12 +146,12 @@ def index(request):
 			for i in resp3:
 				u_account.append(i["acc_number"])
 			dt = 2
-			res = requests.get(url="http://34.70.127.65/Project/get_stock_details/?user_id="+str(user_id)+"&user_token="+str(request.session['user_token']))
+			res = requests.get(url=SERVER_URL+"get_stock_details/?user_id="+str(user_id)+"&user_token="+str(request.session['user_token']))
 			resp = res.json()
 			dt = 3
-			trans = requests.get(url="http://34.70.127.65/Project/api/transactions/?user_id="+str(user_id)+"&user_token="+str(request.session['user_token']))
+			trans = requests.get(url=SERVER_URL+"api/transactions/?user_id="+str(user_id)+"&user_token="+str(request.session['user_token']))
 			resp2 = trans.json()
-			trans2 = requests.get(url="http://34.70.127.65/Project/api/recurring_buy/?user_id="+str(user_id))
+			trans2 = requests.get(url=SERVER_URL+"api/recurring_buy/?user_id="+str(user_id))
 			resp4 = trans2.json()
 			dt = 4
 			data = {
@@ -162,9 +163,10 @@ def index(request):
 				"user_id": user_id,
 				"user_account": u_account,
 				"user_token": request.session['user_token'],
-				"recs": resp4
+				"recs": resp4,
+				"SERVER_URL": SERVER_URL
 			}
-			return render_to_response('atrade/Home.html', data)
+			return render(request, 'atrade/Home.html', data)
 		except Exception as e:
 			return HttpResponse(str(e)+"-"+str(dt))
 
@@ -174,58 +176,61 @@ def profile(request):
 	if not check_session(request):
 		return redirect(HOME_PAGE)
 	user_id = request.session['user_id']
-	url1 = "http://34.70.127.65/Project/api/users/" + str(user_id)
+	url1 = SERVER_URL+"api/users/" + str(user_id)
 	res = requests.get(url = url1)
 	resp = res.json()
 	resp['user_name'] = request.session["user_name"]
 	resp["user_token"] = request.session['user_token']
-	return render_to_response('atrade/user_profile.html',resp)
+	resp["SERVER_URL"] = SERVER_URL
+	return render(request, 'atrade/user_profile.html',resp)
 
 def edit_profile(request):
 	if not check_session(request):
 		return redirect(HOME_PAGE)
 	user_id = request.session['user_id']
-	url1 = "http://34.70.127.65/Project/api/users/" + str(user_id)
+	url1 = SERVER_URL+"api/users/" + str(user_id)
 	res = requests.get(url=url1)
 	resp = res.json()
 	resp['user_name'] = request.session["user_name"]
 	resp["user_token"] = request.session['user_token']
-	return render_to_response('atrade/edit_user.html',resp)
+	resp["SERVER_URL"] = SERVER_URL
+	return render(request, 'atrade/edit_user.html',resp)
 
 def signup(request):
-	return render_to_response('atrade/signup.html')
+	return render(request, 'atrade/signup.html')
 
 
 def companies(request):
 	if not check_session(request):
 		return redirect(HOME_PAGE)
 	user_id = request.session['user_id']
-	res = requests.get("http://34.70.127.65/Project/api/companies/")
+	res = requests.get(SERVER_URL+"api/companies/")
 	resp = res.json()
 	data = {
 		"user_name": request.session["user_name"],
 		"companies" : resp,
 		"len": len(resp),
 		"user_token": request.session['user_token'],
+		"SERVER_URL": SERVER_URL
 	}
-	return render_to_response('atrade/companies.html', data)
+	return render(request, 'atrade/companies.html', data)
 
 
 def company(request, company_symbol):
 	if not check_session(request):
 		return redirect(HOME_PAGE)
 	user_id = request.session['user_id']
-	response = requests.get("http://34.70.127.65/Project/get_current/"+str(company_symbol)+"/?user_token="+str(request.session['user_token']))
+	response = requests.get(SERVER_URL+"get_current/"+str(company_symbol)+"/?user_token="+str(request.session['user_token']))
 	
-	response1 = requests.get("http://34.70.127.65/Project/get_recent/"+str(company_symbol)+"/INTRADAY/?user_token="+str(request.session['user_token']))
+	response1 = requests.get(SERVER_URL+"get_recent/"+str(company_symbol)+"/INTRADAY/?user_token="+str(request.session['user_token']))
 
 	params = {
 		"company_symbol": company_symbol
 	}
-	response2 = requests.get(url="http://34.70.127.65/Project/api/companies/?company_symbol="+str(company_symbol))
+	response2 = requests.get(url=SERVER_URL+"api/companies/?company_symbol="+str(company_symbol))
 	
 
-	url3 = "http://34.70.127.65/Project/api/bank_accounts/?acc_owner=" + str(user_id)
+	url3 = SERVER_URL+"api/bank_accounts/?acc_owner=" + str(user_id)
 	res3 = requests.get(url = url3)
 	resp3 = res3.json()
 	u_account=[]
@@ -246,6 +251,7 @@ def company(request, company_symbol):
 			"user_account": u_account,
 			"user_id": user_id,
 			"user_token": request.session['user_token'],
+			"SERVER_URL": SERVER_URL
 		}
 		
 	except Exception as e:
@@ -253,14 +259,14 @@ def company(request, company_symbol):
 			"error": "error :" + str(e)
 		}
 
-	return render_to_response('atrade/company_home.html', data)
+	return render(request, 'atrade/company_home.html', data)
 
 
 def bank_accounts(request):
 	if not check_session(request):
 		return redirect(HOME_PAGE)
 	user_id = request.session['user_id']
-	res = requests.get("http://34.70.127.65/Project/api/bank_accounts/?acc_owner="+str(user_id))
+	res = requests.get(SERVER_URL+"api/bank_accounts/?acc_owner="+str(user_id))
 	resp = res.json()
 	data = {
 		"user_name": request.session["user_name"],
@@ -268,8 +274,9 @@ def bank_accounts(request):
 		"len": len(resp),
 		"user_id": user_id,
 		"user_token": request.session['user_token'],
+		"SERVER_URL": SERVER_URL
 	}
-	return render_to_response('atrade/bank_accounts.html', data)
+	return render(request, 'atrade/bank_accounts.html', data)
 
 
 def remove_bank_account(request, acc_id, user_id):
@@ -278,7 +285,7 @@ def remove_bank_account(request, acc_id, user_id):
 	su_id = request.session['user_id']
 	if su_id == user_id:
 		try:
-			requests.get('http://34.70.127.65/Project/delete_bank_account/'+str(acc_id)+"/?user_token="+str(request.session['user_token']))
+			requests.get(SERVER_URL+'delete_bank_account/'+str(acc_id)+"/?user_token="+str(request.session['user_token']))
 		except Exception as e:
 			msg = "error"
 	return redirect("/Project/bank_accounts/")
@@ -287,7 +294,7 @@ def remove_bank_account(request, acc_id, user_id):
 def statastics(request):
 	if not check_session(request):
 		return redirect(HOME_PAGE)
-	res = requests.get("http://34.70.127.65/Project/api/companies/")
+	res = requests.get(SERVER_URL+"api/companies/")
 	companies = res.json()
 	user_id = request.session['user_id']
 	data = {
@@ -295,8 +302,9 @@ def statastics(request):
 		"companies": companies,
 		"user_name": request.session['user_name'],
 		"user_token": request.session['user_token'],
+		"SERVER_URL": SERVER_URL
 	}
-	return render_to_response('atrade/custom_graph.html', data)
+	return render(request, 'atrade/custom_graph.html', data)
 
 
 def cart(request):
@@ -304,7 +312,7 @@ def cart(request):
 		return redirect(HOME_PAGE)
 
 	user_id = request.session['user_id']
-	url3 = "http://34.70.127.65/Project/api/bank_accounts/?acc_owner=" + str(user_id)
+	url3 = SERVER_URL+"api/bank_accounts/?acc_owner=" + str(user_id)
 	res3 = requests.get(url = url3)
 	resp3 = res3.json()
 	u_account=[]
@@ -331,14 +339,15 @@ def cart(request):
 			"user_token": request.session['user_token'],
 
 		}
-	return render_to_response('atrade/cart.html', res)
+	res["SERVER_URL"] = SERVER_URL
+	return render(request, 'atrade/cart.html', res)
 
 
 @csrf_exempt
 def send_otp(request):
 	email_id = request.POST.get('email_id')
 
-	url3 = "http://34.70.127.65/Project/generate_password/?email_id=" + str(email_id)
+	url3 = SERVER_URL+"generate_password/?email_id=" + str(email_id)
 	res3 = requests.get(url = url3)
 	resp3 = res3.json()
 
@@ -351,5 +360,5 @@ def send_otp(request):
 
 
 def delete_rec(request):
-	requests.get("http://34.70.127.65/Project/delete_rec/?rec_id="+request.GET.get('rec_id'))
+	requests.get(SERVER_URL+"delete_rec/?rec_id="+request.GET.get('rec_id'))
 	return redirect('/Project/')

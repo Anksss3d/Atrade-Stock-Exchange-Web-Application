@@ -417,7 +417,7 @@ $('a[href*="#"]').on('click', function(e) {
 
     e.preventDefault();
     var form = $(this);
-    var url1 = "http://34.70.127.65/Project/create_user/";
+    var url1 = "{{SERVER_URL}}create_user/";
 
     $.ajax({
            type: "POST",

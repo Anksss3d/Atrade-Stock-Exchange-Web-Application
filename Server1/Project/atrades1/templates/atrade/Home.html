@@ -211,7 +211,7 @@ $(document).ready(function () {
     var stock_id = $(this).attr('myattr');
     cur_button = $(this);
     //alert(stock_id); 
-    var url1 = "http://34.70.127.65/Project/get_stock_analysis/?user_token={{ user_token }}";
+    var url1 = "{{SERVER_URL}}get_stock_analysis/?user_token={{ user_token }}";
         $.ajax({
             type: "POST",
             url: url1,
@@ -249,7 +249,7 @@ $(document).ready(function () {
         $("#sell_stock_form").submit(function (e) {
             e.preventDefault();
             var form = $(this);
-            var url1 = "http://34.70.127.65/Project/sell_stock/?user_token={{ user_token }}";
+            var url1 = "{{SERVER_URL}}sell_stock/?user_token={{ user_token }}";
 
             $.ajax({
                 type: "POST",

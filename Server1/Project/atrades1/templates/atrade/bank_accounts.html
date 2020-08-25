@@ -143,7 +143,7 @@
     $("#add_acc").submit(function(e) {
             e.preventDefault();
             var form = $(this);
-            var url1 = "http://34.70.127.65/Project/create_bank_account/?user_token={{ user_token }}";
+            var url1 = "{{SERVER_URL}}create_bank_account/?user_token={{ user_token }}";
 
             $.ajax({
                 type: "POST",
@@ -170,7 +170,7 @@
     $("#transfer_funds").submit(function(e) {
             e.preventDefault();
             var form = $(this);
-            var url1 = "http://34.70.127.65/Project/transfer_funds/?user_token={{ user_token }}";
+            var url1 = "{{SERVER_URL}}transfer_funds/?user_token={{ user_token }}";
             if ($("#from_account").val() == $("#to_account").val()){
             	alert("You cannot transfer funds to same account");
             }

@@ -25,6 +25,6 @@ urlpatterns = [
     url(r'edit_profile/$', views.edit_profile, name='edit_profile'),
     path('remove_bank_account/<int:acc_id>/<int:user_id>/', views.remove_bank_account, name='remove_bank_account'),
 ]
-
-handler404 = views.error_404
-handler500 = views.error_500
+#
+# handler404 = views.error_404
+# handler500 = views.error_500

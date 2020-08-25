@@ -117,7 +117,7 @@ $(document).ready(function(){
 		}
 		//alert("starting to buy, geting data from table; rows: "+mydt[0].company_name);
 
-        var url1 = "http://34.70.127.65/Project/buy_queue_stocks/?user_token={{ user_token }}";
+        var url1 = "{{SERVER_URL}}buy_queue_stocks/?user_token={{ user_token }}";
 
         $.ajax({
             type: "POST",
