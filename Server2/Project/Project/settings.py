@@ -82,10 +82,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'Atrade',
-        'USER': 'atrade',
-        'PASSWORD': 'UndergrounD2',
-        'HOST': '34.68.53.28',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
         'PORT': '3306',
+        'OPTIONS': {
+                    'sql_mode': 'traditional',
+                }
     }
 }
 
@@ -153,3 +156,5 @@ CACHES = {
         'LOCATION': '127.0.0.1:11211',
     }
 }
+
+SERVER3_URL = "http://127.0.0.1:8002/"

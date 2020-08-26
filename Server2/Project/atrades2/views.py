@@ -1,10 +1,8 @@
-from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 
-from rest_framework import viewsets, generics, filters
+from rest_framework import viewsets
 from .models import User, Transaction, BankAccount, Company, Stocks, RecurringBuy, Queue
 from .serializers import UserSerializer, BankAccountSerializer, CompanySerializer, StocksSerializer, TransactionSerializer, RecurringBuySerializer
-import django_filters.rest_framework
 from django.views.decorators.csrf import csrf_exempt
 from django.forms.models import model_to_dict
 import requests
@@ -13,8 +11,8 @@ import random, string
 from collections import defaultdict
 from django.core.cache import cache
 import time
-import schedule
 from django.db import connection
+from Project.settings import SERVER3_URL
 
 
 SERVER_REQ_COUNT = 0
@@ -193,7 +191,7 @@ def get_current_data(request, company_id):
     if not verify_token(request):
         return FORBIDDEN_RESPONSE
     global SERVER_REQ_COUNT
-    response = requests.get('http://34.66.96.167/Project/get_current/'+str(company_id)+'/')
+    response = requests.get(SERVER3_URL+'get_current/'+str(company_id)+'/')
     s = response.json()
     SERVER_REQ_COUNT += 1
     return JsonResponse(s)
@@ -203,7 +201,7 @@ def get_custom_data(request, company_id, data_type, start_date, end_date):
     if not verify_token(request):
         return FORBIDDEN_RESPONSE
     global SERVER_REQ_COUNT
-    response = requests.get('http://34.66.96.167/Project/get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(start_date)+'/'+str(end_date)+'/')
+    response = requests.get(SERVER3_URL+'get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(start_date)+'/'+str(end_date)+'/')
     t = response.json()
     SERVER_REQ_COUNT += 1
     return JsonResponse(t, safe=False)
@@ -329,7 +327,7 @@ def get_stock_analysis(request):
         return FORBIDDEN_RESPONSE
     try:
         company_symbol = request.POST.get('company_symbol')
-        res = requests.get('http://34.66.96.167/Project/get_current/'+str(company_symbol)+'/')
+        res = requests.get(SERVER3_URL+'get_current/'+str(company_symbol)+'/')
         resp = res.json()
         company = Company.objects.get(company_symbol = company_symbol)
         data = {
@@ -431,39 +429,39 @@ def get_recent_data(request, company_id, data_type):
     now = datetime.now()
     today = now.strftime("%Y%m%d")
     if data_type == "INTRADAY":
-        response = requests.get('http://34.66.96.167/Project/get_history/'+str(company_id)+'/'+str(data_type)+'/')
+        response = requests.get(SERVER3_URL+'get_history/'+str(company_id)+'/'+str(data_type)+'/')
         t = response.json()
     elif data_type == "Week":
         data_type = "Daily"
         last_day = (now - timedelta(days=7)).strftime("%Y%m%d")
-        response = requests.get('http://34.66.96.167/Project/get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(last_day)+'/'+str(today)+'/')
+        response = requests.get(SERVER3_URL+'get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(last_day)+'/'+str(today)+'/')
         t = response.json()
     elif data_type == "LastWeek":
         data_type = "Daily"
         today = (now - timedelta(days=7)).strftime("%Y%m%d")
         last_day = (now - timedelta(days=14)).strftime("%Y%m%d")
-        response = requests.get('http://34.66.96.167/Project/get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(last_day)+'/'+str(today)+'/')
+        response = requests.get(SERVER3_URL+'get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(last_day)+'/'+str(today)+'/')
         t = response.json()        
     elif data_type == "Month":
         data_type = "Daily"
         last_day = (now - timedelta(days=30)).strftime("%Y%m%d")
-        response = requests.get('http://34.66.96.167/Project/get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(last_day)+'/'+str(today)+'/')
+        response = requests.get(SERVER3_URL+'get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(last_day)+'/'+str(today)+'/')
         t = response.json()  
     elif data_type == "LastMonth":
         data_type = "Daily"
         today = (now - timedelta(days=30)).strftime("%Y%m%d")
         last_day = (now - timedelta(days=60)).strftime("%Y%m%d")
-        response = requests.get('http://34.66.96.167/Project/get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(last_day)+'/'+str(today)+'/')
+        response = requests.get(SERVER3_URL+'get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(last_day)+'/'+str(today)+'/')
         t = response.json()  
     elif data_type == "Year":
         data_type = "Weekly"
         last_day = (now - timedelta(days=365)).strftime("%Y%m%d")
-        response = requests.get('http://34.66.96.167/Project/get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(last_day)+'/'+str(today)+'/')
+        response = requests.get(SERVER3_URL+'get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(last_day)+'/'+str(today)+'/')
         t = response.json() 
     elif data_type == "5Year":
         data_type = "Monthly"
         last_day = (now - timedelta(days=1825)).strftime("%Y%m%d")
-        response = requests.get('http://34.66.96.167/Project/get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(last_day)+'/'+str(today)+'/')
+        response = requests.get(SERVER3_URL+'get_custom/'+str(company_id)+'/'+str(data_type)+'/'+str(last_day)+'/'+str(today)+'/')
         t = response.json() 
 
     SERVER_REQ_COUNT += 1

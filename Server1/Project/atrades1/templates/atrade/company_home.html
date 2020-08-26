@@ -249,7 +249,7 @@
 
                     if (response["response_code"] == 0) {
                         alert("Recurring Buy Setup Successful");
-                        //window.location.href = "/Project/";
+                        //window.location.href = "/";
 
                     } else {
                         alert("Error in Recurring Setup:" + response["response_message"]);
@@ -259,7 +259,7 @@
         });
 
         $("#buy_it_now").click(function (e) {
-            var url1 = "/Project/add_to_cart/";
+            var url1 = "/add_to_cart/";
 
             $.ajax({
                 type: "POST",
@@ -270,7 +270,7 @@
 
                     if (response["response_code"] == 0) {
                         alert("Stock added to cart Successfully");
-                        window.location.href = "/Project/cart/";
+                        window.location.href = "/cart/";
 
                     } else {
                         alert("Error in stock addition in cart:" + response["response_message"]);

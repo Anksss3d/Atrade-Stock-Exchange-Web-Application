@@ -281,7 +281,7 @@ setTimeout(explode, 5000);
       
       email1 = googleUser.getBasicProfile().getEmail();
       
-      url1 = "/Project/google_login/"
+      url1 = "/google_login/"
 	   $.ajax({
 	        type: "POST",
 	        url: url1,
@@ -289,7 +289,7 @@ setTimeout(explode, 5000);
 	        success: function (response) {
 	            if (response["response_code"] == 0) {
                  //alert("logged in as :"+response["user_name"]);
-	                window.location.href = "/Project/";
+	                window.location.href = "/";
 	            } else {
 	                alert("Error : " + response["response_message"]);
                     nm = googleUser.getBasicProfile().getName().split(" ")
@@ -357,7 +357,7 @@ $('a[href*="#"]').on('click', function(e) {
 
         e.preventDefault();
         var form = $(this);
-        var url1 = "/Project/check_login/";
+        var url1 = "/check_login/";
 
         $.ajax({
             type: "POST",
@@ -365,7 +365,7 @@ $('a[href*="#"]').on('click', function(e) {
             data: form.serialize(),
             success: function (response) {
                 if (response["response_code"] == 0) {
-                    window.location.href = "/Project/";
+                    window.location.href = "/";
                 } else {
                     alert("Error :" + response["response_message"]);
 
@@ -445,7 +445,7 @@ $('a[href*="#"]').on('click', function(e) {
     $("#get_otp_btn").click(function(){
     alert("clicked");
     dt = { email_id: $("#email_id").val() }
-    var url1 = "/Project/send_otp/";
+    var url1 = "/send_otp/";
 
     $.ajax({
            type: "POST",

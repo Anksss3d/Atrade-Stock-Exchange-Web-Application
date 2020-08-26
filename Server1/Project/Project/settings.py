@@ -121,7 +121,9 @@ STATICFILES_FINDERS = (
 #   'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-STATIC_ROOT = "/opt/bitnami/apps/django/django_projects/Project/atrades1/static/"
+STATICFILES_DIRS = [BASE_DIR + "/atrades1/static/"]
+
+# STATIC_ROOT = "/atrades1/static/"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 STATIC_URL = '/static/'
@@ -132,4 +134,4 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 
-SERVER_URL = "http://34.70.127.65/Project/"
+SERVER_URL = "http://127.0.0.1:8001/"

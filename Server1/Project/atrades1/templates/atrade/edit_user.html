@@ -82,7 +82,7 @@
         <div >
           <input type="hidden" value="{{user_id}}" name ="user_id">
 
-          <a href="/Project/profile/" class="btn btn-danger" >Cancel</a>
+          <a href="/profile/" class="btn btn-danger" >Cancel</a>
           <button type="submit" class="btn btn-primary" >Update</button>
         </div></center>
  </form>
@@ -98,7 +98,7 @@
     $("#updation").submit(function(e) {
             e.preventDefault();
             var form = $(this);
-            var url1 = "http://34.70.127.65/Project/update_user_profile/?user_token={{ user_token }}";
+            var url1 = "{{SERVER_URL}}update_user_profile/?user_token={{ user_token }}";
 
             $.ajax({
                 type: "POST",
@@ -109,7 +109,7 @@
 
                     if (response["response_code"] == 0) {
                         alert("Profile Updated Successfully");
-                        window.location.href = "/Project/profile/";
+                        window.location.href = "/profile/";
                     } else {
                         alert("Error :" + response["response_message"]);
                     }

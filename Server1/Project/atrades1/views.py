@@ -9,7 +9,7 @@ import requests, json
 from django.conf import settings
 from Project.settings import SERVER_URL
 
-HOME_PAGE = '/Project/'
+HOME_PAGE = '/'
 SUCCESS_JSON = {
 	"response_code" : 0
 }
@@ -138,6 +138,7 @@ def index(request):
 			user_id = request.session['user_id']
 
 			url3 = SERVER_URL+"api/bank_accounts/?acc_owner=" + str(user_id)
+			print("urL IS : ", url3)
 			res3 = requests.get(url = url3)
 			resp3 = res3.json()
 			u_account=[]
@@ -288,7 +289,7 @@ def remove_bank_account(request, acc_id, user_id):
 			requests.get(SERVER_URL+'delete_bank_account/'+str(acc_id)+"/?user_token="+str(request.session['user_token']))
 		except Exception as e:
 			msg = "error"
-	return redirect("/Project/bank_accounts/")
+	return redirect("/bank_accounts/")
 
 
 def statastics(request):
@@ -361,4 +362,4 @@ def send_otp(request):
 
 def delete_rec(request):
 	requests.get(SERVER_URL+"delete_rec/?rec_id="+request.GET.get('rec_id'))
-	return redirect('/Project/')
+	return redirect('/')

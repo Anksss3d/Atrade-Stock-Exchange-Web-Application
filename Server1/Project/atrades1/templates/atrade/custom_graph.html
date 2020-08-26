@@ -68,7 +68,7 @@ var rs_data = [];
             var ed = $("#end_date").val().replace('-', '').replace('-', '');
             var dtype = $("#data_type").val();
             var company_id=$("#company_id").val();
-            var u = "http://34.70.127.65/Project/get_custom/"+company_id+"/"+dtype+"/"+sd+"/"+ed+"/?user_token={{ user_token }}";
+            var u = "{{ SERVER_URL }}get_custom/"+company_id+"/"+dtype+"/"+sd+"/"+ed+"/?user_token={{ user_token }}";
             //alert("Sending Request to :"+u);
             $.ajax({
                 type:"GET",
@@ -139,7 +139,7 @@ var rs_data = [];
     });
 
     function change_link(){
-        var link_base = "/Project/company/"+$("#company_id"). children("option:selected").val()+"/";
+        var link_base = "/company/"+$("#company_id"). children("option:selected").val()+"/";
         $("#buy_button").attr("href", link_base);
     }
 

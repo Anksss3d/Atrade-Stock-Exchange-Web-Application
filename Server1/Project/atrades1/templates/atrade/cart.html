@@ -6,7 +6,7 @@
 
 {% if response_code == 1 %}
 	<h3>There is no item in the cart, Please add some stocks to buy....</h3>
-	<a href="/Project/companies/" class="btn btn-primary">View Companies</a>
+	<a href="/companies/" class="btn btn-primary">View Companies</a>
 {% else %}
 
 <div class="container-fluid">
@@ -62,7 +62,7 @@
 
 	function removeFromCart(id){
 
-            var url1 = "/Project/delete_from_cart/";
+            var url1 = "/delete_from_cart/";
 
             $.ajax({
                 type: "POST",
@@ -73,7 +73,7 @@
 
                     if (response["response_code"] == 0) {
                         alert("Removed Successfully");
-                        window.location.href = "/Project/cart/";
+                        window.location.href = "/cart/";
 
                     } else {
                         alert("Error in Removal:" + response["response_message"]);
@@ -130,9 +130,9 @@ $(document).ready(function(){
                     
                     $.ajax({
 			            type: "GET",
-			            url: "/Project/clear_cart/",
+			            url: "/clear_cart/",
 			            success: function(response){
-			            	window.location.href = "/Project/";
+			            	window.location.href = "/";
 			            }
 			        });
                     

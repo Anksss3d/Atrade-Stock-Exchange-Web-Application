@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
 
 # Create your views here.
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.shortcuts import render
 import requests
-import datetime
 from django import template
 import json
-from django.shortcuts import render_to_response
-import random
-from django.db.models import Avg, Max, Min
+from Project.settings import SERVER3_URL
+
 API_KEY = "P2TM31A3L0RTIWQB"
 
 def index(request):
@@ -115,11 +113,11 @@ def custom_graph_template(request):
 
 def company_page(request, company_id):
 
-    response = requests.get('http://34.66.96.167/Project/get_current/'+str(company_id)+'/')
+    response = requests.get(SERVER3_URL+'get_current/'+str(company_id)+'/')
     s = response.json()
 
 
-    response = requests.get('http://34.66.96.167/Project/get_history/'+str(company_id)+'/Daily/')
+    response = requests.get(SERVER3_URL+'get_history/'+str(company_id)+'/Daily/')
     t = response.json()
     c = {
         "company_id": str(company_id),
@@ -127,7 +125,7 @@ def company_page(request, company_id):
         "current_details": s,
         "current_history": json.dumps(t)
     }
-    return render_to_response('atrade/company_home.html', c)
+    return render(request, 'atrade/company_home.html', c)
 
 
 """
